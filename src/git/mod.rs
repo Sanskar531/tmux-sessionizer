@@ -1,4 +1,4 @@
-use std::{collections::btree_map::RangeMut, fmt, process::Command};
+use std::process::Command;
 
 pub mod fzf;
 use fzf::FzfService;
@@ -77,7 +77,6 @@ impl GitService {
         }
 
         let worktrees = GitService::get_all_worktrees();
-        println!("{:#?}", worktrees);
 
         let does_worktree_exist = worktrees
             .into_iter()
@@ -87,7 +86,7 @@ impl GitService {
             panic!("Worktree already exists.");
         }
 
-        let command = match GitService::get_git_command()
+        match GitService::get_git_command()
             .arg("worktree")
             .arg("add")
             .arg(format!("~/git-worktrees/{}/", branch))
@@ -97,6 +96,5 @@ impl GitService {
             Ok(command) => command,
             Err(e) => panic!("{}", e),
         };
-        println!("{}", command.status);
     }
 }

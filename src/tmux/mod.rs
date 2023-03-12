@@ -4,15 +4,25 @@ pub struct TmuxService;
 
 impl TmuxService {
     pub fn spawn_session(branch_name: &String) -> () {
-        let command = match TmuxService::get_tmux_command()
+        match TmuxService::get_tmux_command()
             .arg("new-session")
             .arg("-c")
-            .arg(format!("~/git-worktrees/{}/", branch_name))
-            .arg("-n")
-            .arg(branch_name)
+            .arg(format!("/home/sanskar/git-worktrees/{}/", branch_name))
             .arg("-s")
             .arg(branch_name)
-            .arg("nvim .")
+            .arg("-d")
+            .output()
+        {
+            Ok(cmd) => cmd,
+            Err(e) => panic!("{}", e),
+        };
+    }
+
+    pub fn attach_session(branch_name: &String)->(){
+        match TmuxService::get_tmux_command()
+            .arg("attach-session")
+            .arg("-t")
+            .arg(branch_name)
             .output()
         {
             Ok(cmd) => cmd,
