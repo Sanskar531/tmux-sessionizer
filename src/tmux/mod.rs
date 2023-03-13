@@ -18,18 +18,6 @@ impl TmuxService {
         };
     }
 
-    pub fn attach_session(branch_name: &String)->(){
-        match TmuxService::get_tmux_command()
-            .arg("attach-session")
-            .arg("-t")
-            .arg(branch_name)
-            .output()
-        {
-            Ok(cmd) => cmd,
-            Err(e) => panic!("{}", e),
-        };
-    }
-
     fn get_tmux_command() -> Command {
         Command::new("tmux")
     }

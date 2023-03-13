@@ -89,7 +89,7 @@ impl GitService {
         match GitService::get_git_command()
             .arg("worktree")
             .arg("add")
-            .arg(format!("~/git-worktrees/{}/", branch))
+            .arg(format!("/home/sanskar/git-worktrees/{}/", branch))
             .arg(branch)
             .output()
         {
