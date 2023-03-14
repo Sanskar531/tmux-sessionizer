@@ -69,7 +69,7 @@ impl GitService {
             .collect::<Vec<String>>()
     }
 
-    pub fn create_worktree(branch: &String) -> () {
+    pub fn create_worktree(branch: &String) -> bool {
         let current_branch = GitService::get_current_branch();
 
         if &current_branch == branch {
@@ -83,7 +83,7 @@ impl GitService {
             .any(|worktree| worktree.contains(branch));
 
         if does_worktree_exist {
-            panic!("Worktree already exists.");
+            return true;
         }
 
         match GitService::get_git_command()
@@ -93,8 +93,8 @@ impl GitService {
             .arg(branch)
             .output()
         {
-            Ok(command) => command,
+            Ok(_) => true,
             Err(e) => panic!("{}", e),
-        };
+        }
     }
 }
