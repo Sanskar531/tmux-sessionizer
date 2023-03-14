@@ -9,10 +9,7 @@ pub struct GitService {
 
 impl GitService {
     pub fn get_all_branches() -> Vec<String> {
-        let output = match GitService::get_git_command().arg("branch").output() {
-            Err(e) => panic!("{}", e),
-            Ok(output) => output,
-        };
+        let output = GitService::get_git_command().arg("branch").output().unwrap();
 
         let git_output = String::from_utf8(output.stdout).unwrap();
         return git_output
@@ -69,7 +66,7 @@ impl GitService {
             .collect::<Vec<String>>()
     }
 
-    pub fn create_worktree(branch: &String) -> bool {
+    pub fn create_worktree(branch: &String) -> () {
         let current_branch = GitService::get_current_branch();
 
         if &current_branch == branch {
@@ -83,18 +80,15 @@ impl GitService {
             .any(|worktree| worktree.contains(branch));
 
         if does_worktree_exist {
-            return true;
+            return;
         }
 
-        match GitService::get_git_command()
+        GitService::get_git_command()
             .arg("worktree")
             .arg("add")
             .arg(format!("/home/sanskar/git-worktrees/{}/", branch))
             .arg(branch)
             .output()
-        {
-            Ok(_) => true,
-            Err(e) => panic!("{}", e),
-        }
+            .unwrap();
     }
 }
