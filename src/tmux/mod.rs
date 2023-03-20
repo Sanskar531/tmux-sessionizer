@@ -13,7 +13,7 @@ impl TmuxService {
             child_process = TmuxService::create_new_session(branch_name);
         }
 
-        child_process.wait();
+        child_process.wait().unwrap();
     }
 
     pub fn attach_created_session(branch_name: &String) -> Child {

@@ -1,10 +1,16 @@
-use std::process::Command;
-
 pub mod fzf;
+pub mod worktree;
+pub mod git_interfaces;
+
 use fzf::FzfService;
+use std::process::Command;
 
 pub struct GitService {
     pub branch_name: Option<String>,
+}
+
+pub struct WorktreeService {
+    pub git_service: GitService,
 }
 
 impl GitService {
@@ -20,7 +26,7 @@ impl GitService {
             .collect();
     }
 
-    pub fn get_branch(&mut self) -> &Option<String> {
+    pub fn get_branch(&mut self) -> Option<&String> {
         match self.branch_name {
             None => {
                 let branches = GitService::get_all_branches();
@@ -29,7 +35,7 @@ impl GitService {
             }
             Some(_) => (),
         };
-        return &self.branch_name;
+        return self.branch_name.as_ref();
     }
 
     fn get_current_branch() -> String {
@@ -48,7 +54,9 @@ impl GitService {
     fn get_git_command() -> Command {
         return Command::new("git");
     }
+}
 
+impl WorktreeService{
     fn get_all_worktrees() -> Vec<String> {
         let command = GitService::get_git_command()
             .arg("worktree")
@@ -66,14 +74,15 @@ impl GitService {
             .collect::<Vec<String>>()
     }
 
-    pub fn create_worktree(branch: &String) -> () {
+    pub fn create_worktree(&mut self) -> () {
+        let branch = self.git_service.get_branch().unwrap();
         let current_branch = GitService::get_current_branch();
 
         if &current_branch == branch {
             panic!("Please choose a branch that has not been checked out.")
         }
 
-        let worktrees = GitService::get_all_worktrees();
+        let worktrees = WorktreeService::get_all_worktrees();
 
         let does_worktree_exist = worktrees
             .into_iter()
