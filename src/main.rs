@@ -13,12 +13,10 @@ fn main() {
     let mut worktree_service = WorktreeService { git_service };
     worktree_service.create_worktree();
     let branch = worktree_service.git_service.get_branch().unwrap();
-    TmuxService::spawn_session(branch);
-    // TODO: create symlinks for dependencies
-
     let mut directories = read_dir("./").unwrap();
     let does_node_modules_exist = directories.any(|dir| dir.unwrap().file_name() == "node_modules");
     if does_node_modules_exist {
         SymLink::link_folder("node_modules", branch);
     }
+    TmuxService::spawn_session(branch);
 }
